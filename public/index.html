@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NICOTINE - نظام إدارة العيادة الطبية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00695c;
+            --primary-dark: #004d40;
+            --primary-light: #4db6ac;
+            --accent: #ff6f61;
+            --bg-main: #f0f4f8;
+            --bg-card: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #e8f5f3 0%, #f0f4f8 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px var(--shadow);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .app-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 4px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .login-header p {
+            font-size: 16px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-card {
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .role-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .role-card.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .role-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .role-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 105, 92, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-login, .btn-primary, .btn-success {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn-login:hover, .btn-primary:hover, .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 105, 92, 0.3);
+        }
+
+        .btn-login:active, .btn-primary:active, .btn-success:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #388e3c 100%);
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .header-title h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            letter-spacing: 2px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .user-details p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .main-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, #ffb74d 0%, var(--warning) 100%);
+            color: white;
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #81c784 0%, var(--success) 100%);
+            color: white;
+        }
+
+        .stat-icon.info {
+            background: linear-gradient(135deg, #64b5f6 0%, #2196f3 100%);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .patient-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .patient-item {
+            background: var(--bg-main);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .patient-item:hover {
+            background: #e0f2f1;
+            transform: translateX(-4px);
+        }
+
+        .patient-info h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .patient-info p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .patient-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .patient-status.status-waiting {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .patient-status.status-inprogress {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .patient-status.status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="app-logo">NICOTINE</div>
+                <p>نظام إدارة العيادة الطبية</p>
+            </div>
+            <div class="login-body">
+                <div id="loginError" class="error-message"></div>
+                
+                <div class="role-grid">
+                    <div class="role-card" data-role="doctor" onclick="selectRole('doctor')">
+                        <span class="role-icon">👨‍⚕️</span>
+                        <div class="role-name">طبيب</div>
+                    </div>
+                    <div class="role-card" data-role="nurse" onclick="selectRole('nurse')">
+                        <span class="role-icon">👩‍⚕️</span>
+                        <div class="role-name">ممرض/ة</div>
+                    </div>
+                    <div class="role-card" data-role="lab" onclick="selectRole('lab')">
+                        <span class="role-icon">🔬</span>
+                        <div class="role-name">مختبر</div>
+                    </div>
+                    <div class="role-card" data-role="pharmacy" onclick="selectRole('pharmacy')">
+                        <span class="role-icon">💊</span>
+                        <div class="role-name">صيدلية</div>
+                    </div>
+                </div>
+
+                <form id="loginForm" onsubmit="login(event)">
+                    <div class="form-group">
+                        <label>اسم المستخدم</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn-login">دخول</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="header">
+            <div class="header-title">
+                <h2>NICOTINE</h2>
+                <p>نظام إدارة العيادة الطبية</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-details">
+                    <h3 id="userName">المستخدم</h3>
+                    <p id="userRole">الدور</p>
+                </div>
+                <button class="btn-logout" onclick="logout()">خروج</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon primary">👥</div>
+                    <div class="stat-info">
+                        <h3 id="statPatients">0</h3>
+                        <p>إجمالي المرضى</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">🔬</div>
+                    <div class="stat-info">
+                        <h3 id="statLabs">0</h3>
+                        <p>تحاليل معلقة</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon success">💊</div>
+                    <div class="stat-info">
+                        <h3 id="statPrescriptions">0</h3>
+                        <p>وصفات نشطة</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon info">📅</div>
+                    <div class="stat-info">
+                        <h3 id="statAppointments">0</h3>
+                        <p>مواعيد اليوم</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Section -->
+            <div class="section" id="mainSection"></div>
+        </div>
+    </div>
+
+    <!-- Patient Modal -->
+    <div class="modal" id="patientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>بيانات المريض</h2>
+                <button class="btn-close" onclick="closePatientModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(event, 'basicInfo')">البيانات الأساسية</button>
+                    <button class="tab" onclick="switchTab(event, 'medicalHistory')">التاريخ المرضي</button>
+                    <button class="tab" onclick="switchTab(event, 'medicalRecords')">السجل الطبي</button>
+                    <button class="tab" onclick="switchTab(event, 'labTests')">التحاليل</button>
+                    <button class="tab" onclick="switchTab(event, 'prescriptions')">الوصفات</button>
+                </div>
+
+                <!-- Basic Info Tab -->
+                <div class="tab-content active" id="basicInfoTab">
+                    <form id="patientForm" onsubmit="savePatient(event)">
+                        <input type="hidden" id="patientId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>الرقم القومي *</label>
+                                <input type="text" id="nationalId" required>
+                            </div>
+                            <div class="form-group">
+                                <label>الاسم الكامل *</label>
+                                <input type="text" id="fullName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>العمر</label>
+                                <input type="number" id="age">
+                            </div>
+                            <div class="form-group">
+                                <label>الجنس</label>
+                                <select id="gender">
+                                    <option value="">اختر</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>فصيلة الدم</label>
+                                <select id="bloodType">
+                                    <option value="">اختر</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="tel" id="phone">
+                            </div>
+                            <div class="form-group">
+                                <label>العنوان</label>
+                                <input type="text" id="address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم العيادة</label>
+                            <input type="text" id="clinicId">
+                        </div>
+                        <button type="submit" class="btn-success">حفظ البيانات</button>
+                    </form>
+                </div>
+
+                <!-- Medical History Tab -->
+                <div class="tab-content" id="medicalHistoryTab">
+                    <div class="form-group">
+                        <label>الأمراض المزمنة</label>
+                        <textarea id="chronicDiseases" placeholder="مثل: السكري، ضغط الدم..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>العمليات الجراحية السابقة</label>
+                        <textarea id="previousSurgeries" placeholder="مثل: استئصال الزائدة الدودية..."></textarea>
+                    </div>
+                    <button class="btn-success" onclick="saveMedicalHistory()">حفظ التاريخ المرضي</button>
+                    <div id="medicalHistoryList" style="margin-top: 20px;"></div>
+                </div>
+
+                <!-- Medical Records Tab -->
+                <div class="tab-content" id="medicalRecordsTab">
+                    <div class="form-group">
+                        <label>الأعراض</label>
+                        <textarea id="symptoms" placeholder="وصف الأعراض التي يعاني منها المريض"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>التشخيص</label>
+                        <textarea id="diagnosis" placeholder="التشخيص الطبي"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>العلاج</label>
+                        <textarea id="treatment" placeholder="خطة العلاج"></textarea>
+                    </div>
+                    <button class="btn-success" onclick="addMedicalRecord()">إضافة سجل</button>
+                    <div id="medicalRecordsList" style="margin-top: 20px;"></div>
+                </div>
+
+                <!-- Lab Tests Tab -->
+                <div class="tab-content" id="labTestsTab">
+                    <div class="form-group">
+                        <label>نوع التحليل</label>
+                        <select id="labTestType">
+                            <option value="">اختر نوع التحليل</option>
+                            <option value="صورة دم كاملة">صورة دم كاملة</option>
+                            <option value="سكر صائم">سكر صائم</option>
+                            <option value="سكر فاطر">سكر فاطر</option>
+                            <option value="وظائف كلى">وظائف كلى</option>
+                            <option value="وظائف كبد">وظائف كبد</option>
+                            <option value="دهون">دهون</option>
+                            <option value="تحليل بول">تحليل بول</option>
+                            <option value="تحليل براز">تحليل براز</option>
+                            <option value="أشعة X">أشعة X</option>
+                            <option value="أشعة مقطعية">أشعة مقطعية</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <textarea id="labNotes" placeholder="ملاحظات إضافية"></textarea>
+                    </div>
+                    <button class="btn-success" onclick="addLabTest()">طلب تحليل</button>
+                    <div id="labTestsList" style="margin-top: 20px;"></div>
+                </div>
+
+                <!-- Prescriptions Tab -->
+                <div class="tab-content" id="prescriptionsTab">
+                    <div class="form-group">
+                        <label>اسم الدواء</label>
+                        <input type="text" id="medicineName" placeholder="مثل: أموكسيسيلين">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>الجرعة</label>
+                            <input type="text" id="dosage" placeholder="مثل: 500 مجم">
+                        </div>
+                        <div class="form-group">
+                            <label>التكرار</label>
+                            <select id="frequency">
+                                <option value="">اختر</option>
+                                <option value="مرة يومياً">مرة يومياً</option>
+                                <option value="مرتين يومياً">مرتين يومياً</option>
+                                <option value="ثلاث مرات يومياً">ثلاث مرات يومياً</option>
+                                <option value="أربع مرات يومياً">أربع مرات يومياً</option>
+                                <option value="عند الحاجة">عند الحاجة</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>المدة (بالأيام)</label>
+                            <input type="number" id="duration" value="7">
+                        </div>
+                        <div class="form-group">
+                            <label>التوقيت</label>
+                            <select id="timing">
+                                <option value="">اختر</option>
+                                <option value="قبل الأكل">قبل الأكل</option>
+                                <option value="بعد الأكل">بعد الأكل</option>
+                                <option value="مع الأكل">مع الأكل</option>
+                                <option value="قبل النوم">قبل النوم</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <textarea id="prescriptionNotes" placeholder="ملاحظات إضافية"></textarea>
+                    </div>
+                    <button class="btn-success" onclick="addPrescription()">إضافة وصفة</button>
+                    <div id="prescriptionsList" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = window.location.origin + '/api';
+        let currentUser = null;
+        let selectedRole = null;
+        let currentPatientId = null;
+        let authToken = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        // Auth Functions
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-role="${role}"]`).classList.add('active');
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            
+            if (!selectedRole) {
+                showError('الرجاء اختيار الدور');
+                return;
+            }
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, role: selectedRole })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error || 'فشل تسجيل الدخول');
+                    return;
+                }
+
+                // Save auth data
+                authToken = data.token;
+                currentUser = data.user;
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Show dashboard
+                showDashboard();
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('حدث خطأ في الاتصال');
+            }
+        }
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('currentUser');
+
+            if (token && user) {
+                authToken = token;
+                currentUser = JSON.parse(user);
+                selectedRole = currentUser.role;
+                showDashboard();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            authToken = null;
+            currentUser = null;
+            selectedRole = null;
+            
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+            
+            // Reset form
+            document.getElementById('loginForm').reset();
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('active');
+            });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+
+        // API Helper
+        async function apiRequest(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers
+            });
+
+            if (response.status === 401) {
+                logout();
+                throw new Error('Unauthorized');
+            }
+
+            return response;
+        }
+
+        // Dashboard Functions
+        async function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+
+            // Update user info
+            const roleIcons = {
+                'doctor': '👨‍⚕️',
+                'nurse': '👩‍⚕️',
+                'lab': '🔬',
+                'pharmacy': '💊'
+            };
+            const roleNames = {
+                'doctor': 'طبيب',
+                'nurse': 'ممرض/ة',
+                'lab': 'مختبر',
+                'pharmacy': 'صيدلية'
+            };
+
+            document.getElementById('userAvatar').textContent = roleIcons[currentUser.role];
+            document.getElementById('userName').textContent = currentUser.fullName;
+            document.getElementById('userRole').textContent = roleNames[currentUser.role];
+
+            // Load dashboard data
+            await loadDashboardData();
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load stats
+                const statsResponse = await apiRequest('/dashboard/stats');
+                const stats = await statsResponse.json();
+                
+                document.getElementById('statPatients').textContent = stats.totalPatients || 0;
+                document.getElementById('statLabs').textContent = stats.pendingLabs || 0;
+                document.getElementById('statPrescriptions').textContent = stats.activePrescriptions || 0;
+                document.getElementById('statAppointments').textContent = stats.todayAppointments || 0;
+
+                // Load role-specific content
+                const mainSection = document.getElementById('mainSection');
+                
+                switch (selectedRole) {
+                    case 'doctor':
+                    case 'nurse':
+                        mainSection.innerHTML = await renderPatientsList();
+                        await loadPatients();
+                        break;
+                    case 'lab':
+                        mainSection.innerHTML = await renderLabTestsList();
+                        await loadLabTests();
+                        break;
+                    case 'pharmacy':
+                        mainSection.innerHTML = await renderPrescriptionsList();
+                        await loadPrescriptions();
+                        break;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Patients Section
+        async function renderPatientsList() {
+            return `
+                <div class="section-header">
+                    <h3>قائمة المرضى</h3>
+                    ${selectedRole === 'doctor' || selectedRole === 'nurse' ? 
+                        '<button class="btn-add" onclick="openNewPatientModal()">➕ مريض جديد</button>' : ''}
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchPatients" placeholder="بحث عن مريض..." 
+                           oninput="searchPatients(this.value)">
+                </div>
+                <div class="patient-list" id="patientList">
+                    <div class="loading">جاري التحميل...</div>
+                </div>
+            `;
+        }
+
+        async function loadPatients(search = '') {
+            try {
+                const endpoint = search ? `/patients?search=${encodeURIComponent(search)}` : '/patients';
+                const response = await apiRequest(endpoint);
+                const patients = await response.json();
+                
+                const patientList = document.getElementById('patientList');
+                
+                if (patients.length === 0) {
+                    patientList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <p>لا يوجد مرضى</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                patientList.innerHTML = patients.map(patient => `
+                    <div class="patient-item" onclick="openPatientModal(${patient.id})">
+                        <div class="patient-info">
+                            <h4>${patient.full_name}</h4>
+                            <p>الرقم القومي: ${patient.national_id} | العمر: ${patient.age || 'غير محدد'}</p>
+                        </div>
+                        <span class="patient-status status-completed">✓</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                document.getElementById('patientList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>حدث خطأ في تحميل البيانات</p>
+                    </div>
+                `;
+            }
+        }
+
+        function searchPatients(query) {
+            loadPatients(query);
+        }
+
+        // Lab Tests Section
+        async function renderLabTestsList() {
+            return `
+                <div class="section-header">
+                    <h3>التحاليل المعملية</h3>
+                </div>
+                <div class="patient-list" id="labTestList">
+                    <div class="loading">جاري التحميل...</div>
+                </div>
+            `;
+        }
+
+        async function loadLabTests() {
+            try {
+                const response = await apiRequest('/lab-tests?status=معلق');
+                const tests = await response.json();
+                
+                const labTestList = document.getElementById('labTestList');
+                
+                if (tests.length === 0) {
+                    labTestList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔬</div>
+                            <p>لا توجد تحاليل معلقة</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                labTestList.innerHTML = tests.map(test => {
+                    const statusClass = test.status === 'معلق' ? 'status-waiting' : 
+                                      test.status === 'قيد الإجراء' ? 'status-inprogress' : 'status-completed';
+                    return `
+                        <div class="patient-item" onclick="updateLabTestStatus(${test.id})">
+                            <div class="patient-info">
+                                <h4>${test.patient_name} - ${test.test_type}</h4>
+                                <p>الرقم القومي: ${test.national_id}</p>
+                                <p>التاريخ: ${new Date(test.created_at).toLocaleDateString('ar-SA')}</p>
+                            </div>
+                            <span class="patient-status ${statusClass}">${test.status}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading lab tests:', error);
+            }
+        }
+
+        async function updateLabTestStatus(testId) {
+            const status = prompt('حالة التحليل:\n1 - معلق\n2 - قيد الإجراء\n3 - مكتمل');
+            const statusMap = { '1': 'معلق', '2': 'قيد الإجراء', '3': 'مكتمل' };
+            
+            if (!status || !statusMap[status]) return;
+
+            const result = status === '3' ? prompt('نتيجة التحليل:') : null;
+
+            try {
+                await apiRequest(`/lab-tests/${testId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: statusMap[status], result })
+                });
+                
+                alert('تم تحديث حالة التحليل');
+                await loadLabTests();
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error updating lab test:', error);
+                alert('حدث خطأ في التحديث');
+            }
+        }
+
+        // Prescriptions Section
+        async function renderPrescriptionsList() {
+            return `
+                <div class="section-header">
+                    <h3>الوصفات الطبية</h3>
+                </div>
+                <div class="patient-list" id="prescriptionList">
+                    <div class="loading">جاري التحميل...</div>
+                </div>
+            `;
+        }
+
+        async function loadPrescriptions() {
+            try {
+                const response = await apiRequest('/prescriptions?status=نشط');
+                const prescriptions = await response.json();
+                
+                const prescriptionList = document.getElementById('prescriptionList');
+                
+                if (prescriptions.length === 0) {
+                    prescriptionList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💊</div>
+                            <p>لا توجد وصفات نشطة</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                prescriptionList.innerHTML = prescriptions.map(presc => {
+                    const statusClass = presc.status === 'نشط' ? 'status-waiting' : 'status-completed';
+                    return `
+                        <div class="patient-item" onclick="dispensePrescription(${presc.id})">
+                            <div class="patient-info">
+                                <h4>${presc.patient_name} - ${presc.medicine_name}</h4>
+                                <p>${presc.dosage} | ${presc.frequency} | ${presc.duration} يوم</p>
+                                <p>التاريخ: ${new Date(presc.created_at).toLocaleDateString('ar-SA')}</p>
+                            </div>
+                            <span class="patient-status ${statusClass}">${presc.status}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading prescriptions:', error);
+            }
+        }
+
+        async function dispensePrescription(prescId) {
+            if (!confirm('هل تم صرف الوصفة؟')) return;
+
+            try {
+                await apiRequest(`/prescriptions/${prescId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: 'منتهي' })
+                });
+                
+                alert('تم صرف الوصفة');
+                await loadPrescriptions();
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error dispensing prescription:', error);
+                alert('حدث خطأ في الصرف');
+            }
+        }
+
+        // Patient Modal Functions
+        function openNewPatientModal() {
+            currentPatientId = null;
+            document.getElementById('patientForm').reset();
+            document.getElementById('patientId').value = '';
+            document.getElementById('patientModal').classList.add('active');
+            switchToTab('basicInfo');
+        }
+
+        async function openPatientModal(patientId) {
+            try {
+                const response = await apiRequest(`/patients/${patientId}`);
+                const patient = await response.json();
+                
+                currentPatientId = patientId;
+                
+                // Fill form
+                document.getElementById('patientId').value = patient.id;
+                document.getElementById('nationalId').value = patient.national_id;
+                document.getElementById('fullName').value = patient.full_name;
+                document.getElementById('age').value = patient.age || '';
+                document.getElementById('gender').value = patient.gender || '';
+                document.getElementById('phone').value = patient.phone || '';
+                document.getElementById('address').value = patient.address || '';
+                document.getElementById('bloodType').value = patient.blood_type || '';
+                document.getElementById('clinicId').value = patient.clinic_id || '';
+                document.getElementById('chronicDiseases').value = patient.chronic_diseases || '';
+                document.getElementById('previousSurgeries').value = patient.previous_surgeries || '';
+                
+                document.getElementById('patientModal').classList.add('active');
+                
+                // Load related data
+                await loadMedicalRecords(patientId);
+                await loadPatientLabTests(patientId);
+                await loadPatientPrescriptions(patientId);
+            } catch (error) {
+                console.error('Error opening patient modal:', error);
+                alert('حدث خطأ في تحميل بيانات المريض');
+            }
+        }
+
+        function closePatientModal() {
+            document.getElementById('patientModal').classList.remove('active');
+            currentPatientId = null;
+        }
+
+        async function savePatient(event) {
+            event.preventDefault();
+            
+            const patientData = {
+                nationalId: document.getElementById('nationalId').value,
+                fullName: document.getElementById('fullName').value,
+                age: parseInt(document.getElementById('age').value) || null,
+                gender: document.getElementById('gender').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                bloodType: document.getElementById('bloodType').value,
+                chronicDiseases: document.getElementById('chronicDiseases').value,
+                previousSurgeries: document.getElementById('previousSurgeries').value,
+                clinicId: document.getElementById('clinicId').value
+            };
+
+            try {
+                const isUpdate = currentPatientId !== null;
+                const response = await apiRequest(
+                    isUpdate ? `/patients/${currentPatientId}` : '/patients',
+                    {
+                        method: isUpdate ? 'PUT' : 'POST',
+                        body: JSON.stringify(patientData)
+                    }
+                );
+
+                const savedPatient = await response.json();
+                
+                if (!response.ok) {
+                    alert(savedPatient.error || 'حدث خطأ');
+                    return;
+                }
+
+                alert(isUpdate ? 'تم تحديث البيانات بنجاح!' : 'تم إضافة المريض بنجاح!');
+                currentPatientId = savedPatient.id;
+                await loadPatients();
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error saving patient:', error);
+                alert('حدث خطأ في الحفظ');
+            }
+        }
+
+        async function saveMedicalHistory() {
+            if (!currentPatientId) {
+                alert('الرجاء حفظ بيانات المريض أولاً');
+                return;
+            }
+
+            const patientData = {
+                chronicDiseases: document.getElementById('chronicDiseases').value,
+                previousSurgeries: document.getElementById('previousSurgeries').value
+            };
+
+            // Get other patient data
+            const response = await apiRequest(`/patients/${currentPatientId}`);
+            const patient = await response.json();
+
+            try {
+                await apiRequest(`/patients/${currentPatientId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ ...patient, ...patientData })
+                });
+                
+                alert('تم حفظ التاريخ المرضي بنجاح!');
+            } catch (error) {
+                console.error('Error saving medical history:', error);
+                alert('حدث خطأ في الحفظ');
+            }
+        }
+
+        async function addMedicalRecord() {
+            if (!currentPatientId) {
+                alert('الرجاء حفظ بيانات المريض أولاً');
+                return;
+            }
+
+            const recordData = {
+                patientId: currentPatientId,
+                symptoms: document.getElementById('symptoms').value.trim(),
+                diagnosis: document.getElementById('diagnosis').value.trim(),
+                treatment: document.getElementById('treatment').value.trim()
+            };
+
+            if (!recordData.symptoms || !recordData.diagnosis) {
+                alert('الرجاء ملء الأعراض والتشخيص');
+                return;
+            }
+
+            try {
+                await apiRequest('/medical-records', {
+                    method: 'POST',
+                    body: JSON.stringify(recordData)
+                });
+
+                alert('تم إضافة السجل الطبي بنجاح!');
+                document.getElementById('symptoms').value = '';
+                document.getElementById('diagnosis').value = '';
+                document.getElementById('treatment').value = '';
+                await loadMedicalRecords(currentPatientId);
+            } catch (error) {
+                console.error('Error adding medical record:', error);
+                alert('حدث خطأ في الإضافة');
+            }
+        }
+
+        async function loadMedicalRecords(patientId) {
+            try {
+                const response = await apiRequest(`/medical-records/patient/${patientId}`);
+                const records = await response.json();
+                
+                const container = document.getElementById('medicalRecordsList');
+                
+                if (records.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p>لا يوجد سجل طبي سابق</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = records.map(record => `
+                    <div class="patient-item">
+                        <div class="patient-info">
+                            <h4>التشخيص: ${record.diagnosis}</h4>
+                            <p>الأعراض: ${record.symptoms}</p>
+                            <p>العلاج: ${record.treatment || 'غير محدد'}</p>
+                            <p>التاريخ: ${new Date(record.created_at).toLocaleDateString('ar-SA')}</p>
+                            ${record.doctor_name ? `<p>الطبيب: ${record.doctor_name}</p>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading medical records:', error);
+            }
+        }
+
+        async function addLabTest() {
+            if (!currentPatientId) {
+                alert('الرجاء حفظ بيانات المريض أولاً');
+                return;
+            }
+
+            const testData = {
+                patientId: currentPatientId,
+                testType: document.getElementById('labTestType').value,
+                notes: document.getElementById('labNotes').value
+            };
+
+            if (!testData.testType) {
+                alert('الرجاء اختيار نوع التحليل');
+                return;
+            }
+
+            try {
+                await apiRequest('/lab-tests', {
+                    method: 'POST',
+                    body: JSON.stringify(testData)
+                });
+
+                alert('تم طلب التحليل بنجاح!');
+                document.getElementById('labTestType').value = '';
+                document.getElementById('labNotes').value = '';
+                await loadPatientLabTests(currentPatientId);
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error adding lab test:', error);
+                alert('حدث خطأ في الإضافة');
+            }
+        }
+
+        async function loadPatientLabTests(patientId) {
+            try {
+                const response = await apiRequest(`/lab-tests/patient/${patientId}`);
+                const tests = await response.json();
+                
+                const container = document.getElementById('labTestsList');
+                
+                if (tests.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔬</div>
+                            <p>لا توجد تحاليل مسجلة</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = tests.map(test => {
+                    const statusClass = test.status === 'معلق' ? 'status-waiting' : 
+                                      test.status === 'قيد الإجراء' ? 'status-inprogress' : 'status-completed';
+                    return `
+                        <div class="patient-item">
+                            <div class="patient-info">
+                                <h4>${test.test_type}</h4>
+                                <p>التاريخ: ${new Date(test.created_at).toLocaleDateString('ar-SA')}</p>
+                                ${test.notes ? `<p>ملاحظات: ${test.notes}</p>` : ''}
+                                ${test.result ? `<p>النتيجة: ${test.result}</p>` : ''}
+                            </div>
+                            <span class="patient-status ${statusClass}">${test.status}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading patient lab tests:', error);
+            }
+        }
+
+        async function addPrescription() {
+            if (!currentPatientId) {
+                alert('الرجاء حفظ بيانات المريض أولاً');
+                return;
+            }
+
+            const prescData = {
+                patientId: currentPatientId,
+                medicineName: document.getElementById('medicineName').value.trim(),
+                dosage: document.getElementById('dosage').value.trim(),
+                frequency: document.getElementById('frequency').value,
+                duration: parseInt(document.getElementById('duration').value),
+                timing: document.getElementById('timing').value,
+                notes: document.getElementById('prescriptionNotes').value
+            };
+
+            if (!prescData.medicineName || !prescData.dosage || !prescData.frequency || 
+                !prescData.duration || !prescData.timing) {
+                alert('الرجاء ملء جميع حقول الوصفة');
+                return;
+            }
+
+            try {
+                await apiRequest('/prescriptions', {
+                    method: 'POST',
+                    body: JSON.stringify(prescData)
+                });
+
+                alert('تم إضافة الوصفة بنجاح!');
+                document.getElementById('medicineName').value = '';
+                document.getElementById('dosage').value = '';
+                document.getElementById('frequency').value = '';
+                document.getElementById('duration').value = '7';
+                document.getElementById('timing').value = '';
+                document.getElementById('prescriptionNotes').value = '';
+                await loadPatientPrescriptions(currentPatientId);
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error adding prescription:', error);
+                alert('حدث خطأ في الإضافة');
+            }
+        }
+
+        async function loadPatientPrescriptions(patientId) {
+            try {
+                const response = await apiRequest(`/prescriptions/patient/${patientId}`);
+                const prescriptions = await response.json();
+                
+                const container = document.getElementById('prescriptionsList');
+                
+                if (prescriptions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💊</div>
+                            <p>لا توجد وصفات مسجلة</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = prescriptions.map(presc => {
+                    const statusClass = presc.status === 'نشط' ? 'status-waiting' : 'status-completed';
+                    return `
+                        <div class="patient-item">
+                            <div class="patient-info">
+                                <h4>${presc.medicine_name}</h4>
+                                <p>${presc.dosage} | ${presc.frequency} | ${presc.duration} يوم | ${presc.timing}</p>
+                                <p>التاريخ: ${new Date(presc.created_at).toLocaleDateString('ar-SA')}</p>
+                                ${presc.notes ? `<p>ملاحظات: ${presc.notes}</p>` : ''}
+                            </div>
+                            <span class="patient-status ${statusClass}">${presc.status}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading patient prescriptions:', error);
+            }
+        }
+
+        function switchTab(event, tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        function switchToTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabs[0].classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Click outside modal to close
+        document.getElementById('patientModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePatientModal();
+            }
+        });
+    </script>
+</body>
+</html>
