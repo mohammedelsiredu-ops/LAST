@@ -224,7 +224,7 @@ nicotine-clinic-app/
 
 For issues or questions:
 - Create an issue on GitHub
-- Contact: your-email@example.com
+- Contact: mohammedelsir95@gmail.com
 
 ## License 📄
 
